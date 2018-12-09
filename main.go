@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"sort"
 	"strconv"
 	"sync"
@@ -59,6 +60,7 @@ func sendStuff(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
+	fmt.Println(runtime.NumCPU())
 	ky := &mykey
 	err := godotenv.Load()
 	if err != nil {
