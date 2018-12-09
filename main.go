@@ -160,7 +160,6 @@ var streamers = []Streamer{
 	{Name: "Mixhound", ChannelId: "UC_jxnWLGJ2eQK4en3UblKEw"},
 	{Name: "Hyphonix", ChannelId: "UC4abN4ZiybnsAXTkTBX7now"},
 	{Name: "Gary", ChannelId: "UCvxSwu13u1wWyROPlCH-MZg"},
-	{Name: "Burger", ChannelId: "UC3MAdjjG3LMCG8CV-d7nEQA"},
 	{Name: "Evan", ChannelId: "UCHYUiFsAJ-EDerAccSHIslw"},
 	{Name: "Lolesports", ChannelId: "UCvqRdlKsE5Q8mf8YXbdIJLw"},
 	{Name: "Chilledcow", ChannelId: "UCSJ4gkVC6NrvII8umztf0Ow"},
@@ -170,6 +169,8 @@ var streamers = []Streamer{
 	{Name: "Nasa", ChannelId: "UCLA_DiR1FfKNvjuUpBHmylQ"},
 	{Name: "CBS", ChannelId: "UC8p1vwvWtl6T73JiExfWs1g"},
 	{Name: "Pepper", ChannelId: "UCdSr4xliU8yDyS1aGnCUMTA"},
+	{Name: "EBZ", ChannelId: "UCkR8ndH0NypMYtVYARnQ-_g"},
+    {Name: "Andy", ChannelId: "UC8EmlqXIlJJpF7dTOmSywBg"}
 }
 var resp []Newlive
 
