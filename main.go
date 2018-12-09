@@ -71,17 +71,15 @@ func init() {
 
 func main() {
 	fmt.Println("Server Started...")
-	c := make(chan []Newlive)
-	go getter(c)
-	go receive(c)
+	go getter()
 
 	go func() {
-		pollInterval := 4
+		pollInterval := 15
 
-		timerCh := time.Tick(time.Duration(pollInterval) * time.Minute)
+		timerCh := time.Tick(time.Duration(pollInterval) * time.Second)
 
 		for range timerCh {
-			go getter(c)
+			go getter()
 		}
 	}()
 
@@ -93,7 +91,7 @@ func main() {
 
 }
 
-func getter(c chan []Newlive) {
+func getter() {
 	var results []Islive
 	fmt.Println("getting....")
 	for _, v := range streamers {
@@ -144,9 +142,6 @@ func getter(c chan []Newlive) {
 		}
 		final = append(final, rz)
 	}
-	c <- final
-}
-func receive(c chan []Newlive) {
-	resp = <-c
+	resp = final
 	sort.Sort(ByViewers(resp))
 }
