@@ -15,7 +15,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
-import . "github.com/MarcDwyer/firstgo/types"
+import . "marc/YoutubeonGo/types"
 
 var wg sync.WaitGroup
 var mykey string
