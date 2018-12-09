@@ -92,56 +92,64 @@ func main() {
 }
 
 func getter() {
-	var results []Islive
+	// var results []Islive
 	fmt.Println("getting....")
-	for _, v := range streamers {
-		url := fmt.Sprintf("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=%v&eventType=live&type=video&key=%v", v.ChannelId, mykey)
-		resp, err := http.Get(url)
-		if err != nil {
-			fmt.Println(err)
-		}
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println(err)
-		}
+	ch := make(chan Islive)
+	go func() {
+		for _, v := range streamers {
+			url := fmt.Sprintf("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=%v&eventType=live&type=video&key=%v", v.ChannelId, mykey)
+			resp, err := http.Get(url)
+			if err != nil {
+				fmt.Println(err)
+			}
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				fmt.Println(err)
+			}
 
-		var streamer Islive
-		json.Unmarshal(body, &streamer)
-		if streamer.PageInfo.TotalResults == 0 {
-			continue
+			var streamer Islive
+			json.Unmarshal(body, &streamer)
+			if streamer.PageInfo.TotalResults == 0 {
+				continue
+			}
+			streamer.Name = v.Name
+			ch <- streamer
+			//	results = append(results, streamer)
 		}
-		streamer.Name = v.Name
-		results = append(results, streamer)
-	}
-	var final []Newlive
-	for _, v := range results {
-		id := v.Items[0].ID.VideoID
-		resp, err := http.Get("https://www.googleapis.com/youtube/v3/videos?part=statistics%2C+snippet%2C+liveStreamingDetails&id=" + id + "&key=" + mykey)
-		if err != nil {
-			fmt.Println(err)
+		close(ch)
+	}()
+	go func() {
+		var final []Newlive
+		for v := range ch {
+			fmt.Println(v)
+			id := v.Items[0].ID.VideoID
+			resp, err := http.Get("https://www.googleapis.com/youtube/v3/videos?part=statistics%2C+snippet%2C+liveStreamingDetails&id=" + id + "&key=" + mykey)
+			if err != nil {
+				fmt.Println(err)
+			}
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				fmt.Println(err)
+			}
+			var live Livestream
+			json.Unmarshal(body, &live)
+			name, err := strconv.Atoi(live.Items[0].LiveStreamingDetails.ConcurrentViewers)
+			if err != nil {
+				fmt.Println(err)
+			}
+			rz := Newlive{
+				Name:        v.Name,
+				ChannelID:   live.Items[0].Snippet.ChannelID,
+				Title:       live.Items[0].Snippet.Title,
+				Description: live.Items[0].Snippet.Description,
+				Viewers:     name,
+				Likes:       live.Items[0].Statistics.LikeCount,
+				Dislikes:    live.Items[0].Statistics.DislikeCount,
+				VideoID:     live.Items[0].ID,
+			}
+			final = append(final, rz)
 		}
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println(err)
-		}
-		var live Livestream
-		json.Unmarshal(body, &live)
-		name, err := strconv.Atoi(live.Items[0].LiveStreamingDetails.ConcurrentViewers)
-		if err != nil {
-			fmt.Println(err)
-		}
-		rz := Newlive{
-			Name:        v.Name,
-			ChannelID:   live.Items[0].Snippet.ChannelID,
-			Title:       live.Items[0].Snippet.Title,
-			Description: live.Items[0].Snippet.Description,
-			Viewers:     name,
-			Likes:       live.Items[0].Statistics.LikeCount,
-			Dislikes:    live.Items[0].Statistics.DislikeCount,
-			VideoID:     live.Items[0].ID,
-		}
-		final = append(final, rz)
-	}
-	resp = final
-	sort.Sort(ByViewers(resp))
+		resp = final
+		sort.Sort(ByViewers(resp))
+	}()
 }
