@@ -276,7 +276,7 @@ func getter() {
 }
 
 func interval() {
-	pollInterval := 10
+	pollInterval := 6
 
 	timerCh := time.Tick(time.Duration(pollInterval) * time.Minute)
 
