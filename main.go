@@ -13,10 +13,10 @@ import (
 	"sync"
 	"time"
 
+	. "marc/YoutubeonGo/types"
+
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-
-	. "marc/YoutubeonGo/types"
 )
 
 var wg sync.WaitGroup
@@ -71,14 +71,14 @@ func init() {
 
 func main() {
 	fmt.Println("Server Started...")
-	c := make(chan Newlive)
+	c := make(chan []Newlive)
 	go getter(c)
 	go receive(c)
 
 	go func() {
-		pollInterval := 3
+		pollInterval := 25
 
-		timerCh := time.Tick(time.Duration(pollInterval) * time.Minute)
+		timerCh := time.Tick(time.Duration(pollInterval) * time.Second)
 
 		for range timerCh {
 			go getter(c)
@@ -93,7 +93,7 @@ func main() {
 
 }
 
-func getter(c chan Newlive) {
+func getter(c chan []Newlive) {
 	var results []Islive
 	fmt.Println("getting....")
 	for _, v := range streamers {
@@ -115,6 +115,7 @@ func getter(c chan Newlive) {
 		streamer.Name = v.Name
 		results = append(results, streamer)
 	}
+	var final []Newlive
 	for _, v := range results {
 		id := v.Items[0].ID.VideoID
 		resp, err := http.Get("https://www.googleapis.com/youtube/v3/videos?part=statistics%2C+snippet%2C+liveStreamingDetails&id=" + id + "&key=" + mykey)
@@ -141,13 +142,11 @@ func getter(c chan Newlive) {
 			Dislikes:    live.Items[0].Statistics.DislikeCount,
 			VideoID:     live.Items[0].ID,
 		}
-		c <- rz
+		final = append(final, rz)
 	}
-	sort.Sort(ByViewers(resp))
-
+	c <- final
 }
-func receive(c chan Newlive) {
-	for v := range c {
-		resp = append(resp, v)
-	}
+func receive(c chan []Newlive) {
+	resp = <-c
+	sort.Sort(ByViewers(resp))
 }
