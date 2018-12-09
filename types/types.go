@@ -9,6 +9,7 @@ type Streamer struct {
 type Islive struct {
 	Kind       string `json:"kind"`
 	Etag       string `json:"etag"`
+	Name       string
 	RegionCode string `json:"regionCode"`
 	PageInfo   struct {
 		TotalResults   int `json:"totalResults"`
@@ -63,6 +64,7 @@ type Youtube struct {
 type Livestream struct {
 	Kind     string `json:"kind"`
 	Etag     string `json:"etag"`
+	Name     string
 	PageInfo struct {
 		TotalResults   int `json:"totalResults"`
 		ResultsPerPage int `json:"resultsPerPage"`
@@ -124,5 +126,20 @@ type Livestream struct {
 		} `json:"liveStreamingDetails"`
 	} `json:"items"`
 }
+type Newlive struct {
+	Name        string
+	ChannelID   string
+	Title       string
+	Description string
+	Viewers     int
+	Likes       string
+	Dislikes    string
+	VideoID     string
+}
+type ByViewers []Newlive
 
-type ByViewers []Livestream
+func (a ByViewers) Len() int      { return len(a) }
+func (a ByViewers) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByViewers) Less(i, j int) bool {
+	return a[i].Viewers > a[j].Viewers
+}
