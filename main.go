@@ -205,7 +205,6 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	*ky = os.Getenv("KEY")
-	fmt.Println(mykey)
 }
 
 func main() {
@@ -216,7 +215,7 @@ func main() {
 	r.HandleFunc("/streamers/all", getCatalog).Methods("GET")
 	r.HandleFunc("/streamers/live", sendStuff).Methods("GET")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/build")))
-	log.Fatal(http.ListenAndServe(":8000", r))
+	log.Fatal(http.ListenAndServe(":3000", r))
 
 }
 
