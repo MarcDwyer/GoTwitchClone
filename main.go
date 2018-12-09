@@ -170,7 +170,7 @@ var streamers = []Streamer{
 	{Name: "CBS", ChannelId: "UC8p1vwvWtl6T73JiExfWs1g"},
 	{Name: "Pepper", ChannelId: "UCdSr4xliU8yDyS1aGnCUMTA"},
 	{Name: "EBZ", ChannelId: "UCkR8ndH0NypMYtVYARnQ-_g"},
-    {Name: "Andy", ChannelId: "UC8EmlqXIlJJpF7dTOmSywBg"}
+	{Name: "Andy", ChannelId: "UC8EmlqXIlJJpF7dTOmSywBg"},
 }
 var resp []Newlive
 
