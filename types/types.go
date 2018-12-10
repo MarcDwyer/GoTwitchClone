@@ -143,3 +143,8 @@ func (a ByViewers) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a ByViewers) Less(i, j int) bool {
 	return a[i].Viewers > a[j].Viewers
 }
+
+type Random []Streamer
+
+func (r Random) Len() int      { return len(r) }
+func (r Random) Swap(i, j int) { r[i], r[j] = r[j], r[i] }

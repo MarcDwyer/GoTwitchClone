@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"runtime"
@@ -17,6 +18,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	fisheryates "github.com/matttproud/fisheryates"
 )
 
 var wg sync.WaitGroup
@@ -43,6 +45,8 @@ var resp []Newlive
 
 func getCatalog(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
+	rnd := rand.New(rand.NewSource(4))
+	fisheryates.Shuffle(Random(streamers), rnd.Intn)
 	b, err := json.Marshal(streamers)
 	if err != nil {
 		fmt.Println(err)
@@ -79,7 +83,7 @@ func main() {
 		timerCh := time.Tick(time.Duration(pollInterval) * time.Minute)
 
 		for range timerCh {
-			go getter()
+			getter()
 		}
 	}()
 
@@ -121,7 +125,6 @@ func getter() {
 	go func() {
 		var final []Newlive
 		for v := range ch {
-			fmt.Println(v)
 			id := v.Items[0].ID.VideoID
 			resp, err := http.Get("https://www.googleapis.com/youtube/v3/videos?part=statistics%2C+snippet%2C+liveStreamingDetails&id=" + id + "&key=" + mykey)
 			if err != nil {
