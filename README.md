@@ -1,3 +1,3 @@
 # GoTwitchClone
 
-Previous project used NodeJS for the backend. Wanted to learn GO and implemented it for this project.
+This is the deployment build for my Fetchapp v2 project. Instead of Node I used Go. Really enjoy using Go instead of Node. A lot more fun, and faster.
