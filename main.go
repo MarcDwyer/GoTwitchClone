@@ -78,7 +78,7 @@ func main() {
 	go getter()
 
 	go func() {
-		pollInterval := 3
+		pollInterval := 6
 
 		timerCh := time.Tick(time.Duration(pollInterval) * time.Minute)
 
@@ -96,7 +96,6 @@ func main() {
 }
 
 func getter() {
-	// var results []Islive
 	fmt.Println("getting....")
 	ch := make(chan Islive)
 	go func() {
@@ -118,7 +117,6 @@ func getter() {
 			}
 			streamer.Name = v.Name
 			ch <- streamer
-			//	results = append(results, streamer)
 		}
 		close(ch)
 	}()
