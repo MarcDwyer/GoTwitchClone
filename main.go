@@ -27,7 +27,7 @@ var mykey string
 var streamers = []Streamer{
 	{Name: "Ice", ChannelId: "UCv9Edl_WbtbPeURPtFDo-uA"},
 	{Name: "Mixhound", ChannelId: "UC_jxnWLGJ2eQK4en3UblKEw"},
-	{Name: "Hyphonix", ChannelId: "UC4abN4ZiybnsAXTkTBX7now"},
+	{Name: "Hyphonix", ChannelId: "UCaFpm67qMk1W1wJkFhGXucA"},
 	{Name: "Gary", ChannelId: "UCvxSwu13u1wWyROPlCH-MZg"},
 	{Name: "Evan", ChannelId: "UCHYUiFsAJ-EDerAccSHIslw"},
 	{Name: "Lolesports", ChannelId: "UCvqRdlKsE5Q8mf8YXbdIJLw"},
