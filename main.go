@@ -58,7 +58,7 @@ func sendStuff(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	b, err := json.Marshal(resp)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 	w.Write(b)
 }
@@ -99,6 +99,7 @@ func getter() {
 	fmt.Println("getting....")
 	ch := make(chan Islive)
 	go func() {
+		defer close(ch)
 		for _, v := range streamers {
 			url := fmt.Sprintf("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=%v&eventType=live&type=video&key=%v", v.ChannelId, mykey)
 			resp, err := http.Get(url)
@@ -118,10 +119,9 @@ func getter() {
 			streamer.Name = v.Name
 			ch <- streamer
 		}
-		close(ch)
 	}()
 	go func() {
-		var final []Newlive
+		final := new([]Newlive)
 		for v := range ch {
 			id := v.Items[0].ID.VideoID
 			resp, err := http.Get("https://www.googleapis.com/youtube/v3/videos?part=statistics%2C+snippet%2C+liveStreamingDetails&id=" + id + "&key=" + mykey)
@@ -136,7 +136,9 @@ func getter() {
 			json.Unmarshal(body, &live)
 			name, err := strconv.Atoi(live.Items[0].LiveStreamingDetails.ConcurrentViewers)
 			if err != nil {
+				fmt.Println(name)
 				fmt.Println(err)
+				continue
 			}
 			rz := Newlive{
 				Name:        v.Name,
@@ -148,9 +150,9 @@ func getter() {
 				Dislikes:    live.Items[0].Statistics.DislikeCount,
 				VideoID:     live.Items[0].ID,
 			}
-			final = append(final, rz)
+			*final = append(*final, rz)
 		}
-		resp = final
+		resp = *final
 		sort.Sort(ByViewers(resp))
 	}()
 }
