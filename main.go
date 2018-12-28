@@ -14,8 +14,6 @@ import (
 	"sync"
 	"time"
 
-	. "marc/YoutubeonGo/types"
-
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	fisheryates "github.com/matttproud/fisheryates"
@@ -103,14 +101,15 @@ func getter() {
 		for _, v := range streamers {
 			url := fmt.Sprintf("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=%v&eventType=live&type=video&key=%v", v.ChannelId, mykey)
 			resp, err := http.Get(url)
-			if err != nil {
+			if err != nil || resp.StatusCode != 200 {
 				fmt.Println(err)
+				continue
 			}
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				fmt.Println(err)
 			}
-
+			fmt.Println(resp.StatusCode)
 			var streamer Islive
 			json.Unmarshal(body, &streamer)
 			if streamer.PageInfo.TotalResults == 0 {
@@ -125,8 +124,9 @@ func getter() {
 		for v := range ch {
 			id := v.Items[0].ID.VideoID
 			resp, err := http.Get("https://www.googleapis.com/youtube/v3/videos?part=statistics%2C+snippet%2C+liveStreamingDetails&id=" + id + "&key=" + mykey)
-			if err != nil {
+			if err != nil || resp.StatusCode != 200 {
 				fmt.Println(err)
+				continue
 			}
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
@@ -151,6 +151,10 @@ func getter() {
 				VideoID:     live.Items[0].ID,
 			}
 			*final = append(*final, rz)
+		}
+		if *final == nil {
+			close(ch)
+			return
 		}
 		resp = *final
 		sort.Sort(ByViewers(resp))
