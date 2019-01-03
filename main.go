@@ -76,9 +76,9 @@ func main() {
 	go getter()
 
 	go func() {
-		pollInterval := 6
+		pollInterval := 30
 
-		timerCh := time.Tick(time.Duration(pollInterval) * time.Minute)
+		timerCh := time.Tick(time.Duration(pollInterval) * time.Second)
 
 		for range timerCh {
 			getter()
@@ -109,7 +109,6 @@ func getter() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println(resp.StatusCode)
 			var streamer Islive
 			json.Unmarshal(body, &streamer)
 			if streamer.PageInfo.TotalResults == 0 {
