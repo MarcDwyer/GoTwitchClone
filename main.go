@@ -151,7 +151,7 @@ func getter() {
 			}
 			*final = append(*final, rz)
 		}
-		if *final == nil {
+		if len(*final) == 0 {
 			close(ch)
 			return
 		}
