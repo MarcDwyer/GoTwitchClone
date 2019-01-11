@@ -151,10 +151,6 @@ func getter() {
 			}
 			*final = append(*final, rz)
 		}
-		if len(*final) == 0 {
-			close(ch)
-			return
-		}
 		resp = *final
 		sort.Sort(ByViewers(resp))
 	}()
