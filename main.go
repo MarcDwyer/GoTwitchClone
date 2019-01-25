@@ -95,7 +95,7 @@ func main() {
 
 func getter() {
 	fmt.Println("getting....")
-	ch := make(chan Islive)
+	ch := make(chan *Islive)
 	go func() {
 		defer close(ch)
 		for _, v := range streamers {
@@ -115,12 +115,16 @@ func getter() {
 				continue
 			}
 			streamer.Name = v.Name
-			ch <- streamer
+			ch <- &streamer
 		}
 	}()
 	go func() {
 		final := new([]Newlive)
 		for v := range ch {
+			if v == nil {
+				fmt.Println("nil value")
+				continue
+			}
 			id := v.Items[0].ID.VideoID
 			resp, err := http.Get("https://www.googleapis.com/youtube/v3/videos?part=statistics%2C+snippet%2C+liveStreamingDetails&id=" + id + "&key=" + mykey)
 			if err != nil || resp.StatusCode != 200 {
